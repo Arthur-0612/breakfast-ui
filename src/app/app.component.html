@@ -1,0 +1,11 @@
+<app-loading *ngIf="loading$ | async"></app-loading>
+
+<div class="wrapper">
+    <app-sidebar></app-sidebar>
+    
+    <div class="content-wrapper">
+        <router-outlet></router-outlet>
+    </div>
+    
+    <app-footer></app-footer>
+</div>

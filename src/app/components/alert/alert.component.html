@@ -1,0 +1,16 @@
+<div class="alert alert-dismissible"
+    [ngClass]="{ 
+        'alert-success': type === 'success',
+        'alert-warning': type === 'warning',
+        'alert-info':    type === 'info',
+        'alert-danger':  type === 'danger'
+    }">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <i class="fas" 
+        [ngClass]="{ 
+            'fa-check': type === 'success',
+            'fa-exclamation-triangle': type === 'warning',
+            'fa-info': type === 'info',
+            'fa-ban': type === 'danger'
+        }"></i> {{ message }}
+</div>

@@ -1,0 +1,12 @@
+$duracao-devagar: 1s;
+$espacamento-maximo: 100%;
+$cor-neutra-0: #FFFFFF;
+$espacamento-nulo: 0px;
+$grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px
+);
+$grid-quebra-extrapequeno: only screen and (max-width: map-get($grid-breakpoints, sm));
