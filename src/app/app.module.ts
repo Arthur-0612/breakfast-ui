@@ -15,7 +15,10 @@ import { LoadingService } from './services/loading.service'
 import { MobileService } from './services/mobile.service'
 import { EmployeeService } from './services/employee.service'
 import { ToastService } from './services/toast.service'
-import { BreakfastService } from './services/breakfast.service'
+import { BreakfastService } from './services/breakfast.service';
+import { ItemComponent } from './pages/item/item.component'
+import { ItemService } from './services/item.service'
+
 
 registerLocaleData(localePT)
 
@@ -52,7 +55,8 @@ export function tokenGetter() {
     MobileService,
     EmployeeService,
     ToastService,
-    BreakfastService
+    BreakfastService,
+    ItemService
   ],
   bootstrap: [AppComponent]
 })

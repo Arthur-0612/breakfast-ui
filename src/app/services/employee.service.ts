@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { Employee } from "../models/employee";
+import { Observable } from "rxjs";
 
 @Injectable()
 export class EmployeeService {
@@ -20,16 +21,20 @@ export class EmployeeService {
     return this.httpClient.get<Employee[]>(`${this.URL}/all`)
   }
 
+  findByStatus(status: string): Observable<Employee[]> {
+    return this.httpClient.get<Employee[]>(`${this.URL}/status/${status}`)
+  }
+
   save(employee: Employee) {
     return this.httpClient.post<Employee>(`${this.URL}/save`, employee)
   }
 
   update(employee: Employee) {
-    return this.httpClient.post<Employee>(`${this.URL}/update/${employee.id}`, employee)
+    return this.httpClient.put<Employee>(`${this.URL}/update/${employee.id}`, employee)
   }
 
-  delete(id: number) {
-    return this.httpClient.delete<Employee>(`${this.URL}/${id}`)
+  delete(employee: Employee) {
+    return this.httpClient.patch<Employee>(`${this.URL}/delete/${employee.id}`, employee)
   }
 }
 

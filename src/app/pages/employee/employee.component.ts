@@ -17,6 +17,8 @@ declare let $: any
 export class EmployeeComponent implements OnInit {
 
   titlePage: string = 'Funcionário'
+  
+  status: string = 'A'
 
   employee: Employee = new Employee()
   currentItem: any
@@ -26,7 +28,7 @@ export class EmployeeComponent implements OnInit {
 
   employeeForm: FormGroup
 
-  headers: string[] = ['Nome', 'Cpf']
+  headers: string[] = ['Nome', 'Cpf', 'Status', 'Ações']
 
   isSearch: boolean = false
   isMobileDevice: boolean = false
@@ -42,16 +44,12 @@ export class EmployeeComponent implements OnInit {
 
     this.employeeForm = this._formBuilder.group({
       name: ['', Validators.required],
-      cpf: ['', [Validators.required, cpfValidator()]]
+      cpf: ['', [Validators.required, cpfValidator()]],
+      status: ['']
     })
   }
 
   ngOnInit(): void {
-  }
-
-  openModalDeleteEmployee(employee: Employee) {
-    this.currentItem = employee
-    $('#deleteEmployeeModal').modal('show')
   }
 
   openModalNewEmployee() {
@@ -61,12 +59,9 @@ export class EmployeeComponent implements OnInit {
   closeModalNewEmployee() {
     this.employeeForm.reset()
     $('#registerEmployeeModal').modal('hide')
-    this.findAll()
+    this.findByStatus()
   }
-  closeModalDeleteEmployee() {
-    $('#deleteEmployeeModal').modal('hide')
-    this.findAll()
-  }
+
 
 
   prepareSave() {
@@ -87,11 +82,12 @@ export class EmployeeComponent implements OnInit {
   prepareUpdate(employee: Employee) {
     this.employee = employee
     this.delete()
-    this.findAll()
+    this.findByStatus()
   }
 
   private save() {
     this._loadingService.show()
+    this.employee.status = ('A')
     this._EmployeeService.save(this.employee).subscribe({
       next: this.handleResponseSaveOrUpdate.bind(this),
       error: this.handleError.bind(this)
@@ -101,16 +97,17 @@ export class EmployeeComponent implements OnInit {
   private delete() {
     this._loadingService.show()
 
-    this._EmployeeService.delete(this.employee.id).subscribe({
+    this.employee.status = this.employee.status === "A" ? "I" : "A"
+
+    this._EmployeeService.delete(this.employee).subscribe({
       next: this.handleResponseSaveOrUpdate.bind(this),
       error: this.handleError.bind(this)
     }).add(() => this._loadingService.hide())
-    this.closeModalDeleteEmployee()
   }
 
-  findAll() {
+  findByStatus() {
     this.isLoading = true
-    this._EmployeeService.findAll().subscribe({
+    this._EmployeeService.findByStatus(this.status).subscribe({
       next: this.handleResponseFindPage.bind(this),
       error: this.handleError.bind(this)
     }).add(() => this.isLoading = false)
@@ -128,7 +125,7 @@ export class EmployeeComponent implements OnInit {
 
     this.employee = new Employee()
     this.closeModalNewEmployee()
-    this.findAll()
+    this.findByStatus()
   }
 
   isTouchAndInvalid(field: string): boolean {

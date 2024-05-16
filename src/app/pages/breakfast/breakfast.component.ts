@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Breakfast } from 'src/app/models/breakfast';
+import { Employee } from 'src/app/models/employee';
 import { BreakfastService } from 'src/app/services/breakfast.service';
+import { EmployeeService } from 'src/app/services/employee.service';
+import { ItemService } from 'src/app/services/item.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { MobileService } from 'src/app/services/mobile.service';
 import { ToastService } from 'src/app/services/toast.service';
@@ -18,10 +21,12 @@ export class BreakfastComponent implements OnInit {
 
   breakfast: Breakfast = new Breakfast()
   currentItem: any
+  selectedItemList: any[] = []
 
   dataset: any[] = []
   breakfastList: any[] = []
   employeeList: any[] = []
+  itemList: any[] = []
 
   breakfastForm: FormGroup
 
@@ -36,17 +41,22 @@ export class BreakfastComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _toastService: ToastService,
     private _loadingService: LoadingService,
-    private _BreakfastService: BreakfastService) {
+    private _BreakfastService: BreakfastService,
+    private _EmployeeService: EmployeeService,
+    private _ItemService: ItemService) {
     this.isMobileDevice = this.isMobileDevice = this._mobileService.isMobileDevice
 
     this.breakfastForm = this._formBuilder.group({
       description: ['', Validators.required],
       dateBreakfast: ['', Validators.required],
-      employee: ['']
+      employee: [''],
+      item:['']
     })
   }
 
   ngOnInit(): void {
+    this.findEmployee()
+    this.findItem()
   }
   openModalDeleteBreakfast(breakfast: Breakfast) {
     this.currentItem = breakfast
@@ -67,17 +77,41 @@ export class BreakfastComponent implements OnInit {
     this.findAll()
   }
 
+  deleteItem(item: Employee) {
+    const index = this.selectedItemList.indexOf(item)
+    if (index !== -1) {
+      this.selectedItemList.splice(index, 1)
+    }
+  }
 
   itemSelected() {
 
-    let itemSelected = this.breakfastForm.get('employee')?.value
-    let quantidade = this.breakfastForm.get('quantidade')?.value
-    let mensagemErro = ''
+    let employeeId = this.breakfastForm.get('employee')?.value
+    let itemId = this.breakfastForm.get('item')?.value
 
-    if (!itemSelected || !quantidade) {
-      mensagemErro = 'Por favor, preencha os campos com produto e quantidade'
+    itemId = itemId ? parseInt(itemId) : 0
+    employeeId = employeeId ? parseInt(employeeId) : 0
+
+    let employee = this.employeeList.find(elem => elem.id === employeeId)
+    let item = this.itemList.find(elem => elem.id === itemId)
+    
+    if (!employee || !item) {
+      this._toastService.showErrorToast(this.titlePage, 'Por favor, preencha os campos com Funcionário e Item')
       return
     }
+
+    console.log(this.employeeList)
+    console.log(this.itemList)
+
+    let selectedEntry: any = {
+       nome: employee.name,
+       cpf: employee.cpf,
+       item: item.description
+    } 
+
+    this.selectedItemList.push(selectedEntry)
+
+    this.breakfastForm.get('item')?.setValue("")
 
   }
   prepareSave() {
@@ -91,6 +125,10 @@ export class BreakfastComponent implements OnInit {
     this.isError = false
     this.breakfast.description = this.breakfastForm.get('description')?.value
     this.breakfast.dateBreakfast = this.breakfastForm.get('dateBreakfast')?.value
+    employee: this.selectedItemList.map((entry: any) => ({
+      id: entry.id,
+      items: entry.items.map((item: any) => ({ id: item.id }))
+    }))
     this.save()
 
   }
@@ -114,6 +152,22 @@ export class BreakfastComponent implements OnInit {
       next: this.handleResponseFindPage.bind(this),
       error: this.handleError.bind(this)
     }).add(() => this.isLoading = false)
+  }
+
+  findEmployee() {
+    this._EmployeeService.findByStatus('A').subscribe((employee: any[]) => {
+      this.employeeList = employee
+      this.isLoading = false
+    }).add(() => this._loadingService.hide())
+
+  }
+
+  findItem() {
+    this._ItemService.findAll().subscribe((item: any[]) => {
+      this.itemList = item
+      this.isLoading = false
+    }).add(() => this._loadingService.hide())
+
   }
 
   private handleResponseFindPage(resp: any[]) {
