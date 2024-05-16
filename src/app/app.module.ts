@@ -13,6 +13,9 @@ import { LoadingModule } from './components/loading/loading.module'
 import { SidebarModule } from './components/sidebar/sidebar.module'
 import { LoadingService } from './services/loading.service'
 import { MobileService } from './services/mobile.service'
+import { EmployeeService } from './services/employee.service'
+import { ToastService } from './services/toast.service'
+import { BreakfastService } from './services/breakfast.service'
 
 registerLocaleData(localePT)
 
@@ -46,7 +49,10 @@ export function tokenGetter() {
     { provide: LOCALE_ID, useValue: 'pt' },
     { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
     LoadingService,
-    MobileService
+    MobileService,
+    EmployeeService,
+    ToastService,
+    BreakfastService
   ],
   bootstrap: [AppComponent]
 })
