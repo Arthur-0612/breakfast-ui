@@ -20,5 +20,8 @@ export class BreakfastService {
     return this.httpClient.post<Breakfast>(`${this.URL}/save`, breakfast)
   }
 
-}
+  update(breakfast: Breakfast) {
+    return this.httpClient.put<Breakfast>(`${this.URL}/update/${breakfast.id}`, breakfast)
+  }
 
+}

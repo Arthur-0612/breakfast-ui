@@ -64,11 +64,23 @@ export class BreakfastComponent implements OnInit {
 
   openModalViewBreakfast(breakfastData: any) {
     this.breakfastForm.reset()
+
     this.selectedBreakfast = breakfastData
+    
+    this.selectedItemList = breakfastData.employee.map((employee: any) => ({
+      id: employee.id,
+      name: employee.name,
+      cpf: employee.cpf,
+      items: employee.items.map((item: any) => ({
+        id: item.id,
+        description: item.description
+      }))
+    }));
+  
     this.breakfastForm.patchValue({
       description: breakfastData.description,
       dateBreakfast: breakfastData.dateBreakfast,
-      employee: breakfastData.employee.name
+      employee: ''  
     })
     console.log(this.dataset)
     $('#viewBreakfastModal').modal('show')
@@ -90,9 +102,9 @@ export class BreakfastComponent implements OnInit {
   }
 
   deleteItem(entry: any): void {
-    const index = this.selectedItemList.indexOf(entry);
+    const index = this.selectedItemList.indexOf(entry)
     if (index !== -1) {
-      this.selectedItemList.splice(index, 1);
+      this.selectedItemList.splice(index, 1)
     }
   }
   
@@ -101,12 +113,12 @@ export class BreakfastComponent implements OnInit {
     const employeeId: number = parseInt(this.breakfastForm.get('employee')?.value)
     const itemId: number = parseInt(this.breakfastForm.get('item')?.value)
   
-    const employee: Employee | undefined = this.employeeList.find((elem: Employee) => elem.id === employeeId);
+    const employee: Employee | undefined = this.employeeList.find((elem: Employee) => elem.id === employeeId)
     const item: Item | undefined = this.itemList.find((elem: Item) => elem.id === itemId)
   
     if (!employee || !item) {
-      this._toastService.showErrorToast(this.titlePage, 'Por favor, preencha os campos com Funcionário e Item');
-      return;
+      this._toastService.showErrorToast(this.titlePage, 'Por favor, preencha os campos com Funcionário e Item')
+      return
     }
   
     const existingEntry = this.selectedItemList.find((entry: any) => entry.id === employeeId)
@@ -120,7 +132,6 @@ export class BreakfastComponent implements OnInit {
         items: [{ id: itemId, description: item.description }]
       })
     }
-    console.log(this.selectedItemList)
   
     this.breakfastForm.get('item')?.setValue("")
   }
@@ -132,7 +143,7 @@ export class BreakfastComponent implements OnInit {
       return
     }
   
-    this.isError = false;
+    this.isError = false
   
 
     this.breakfast.description = this.breakfastForm.get('description')?.value
@@ -146,11 +157,11 @@ export class BreakfastComponent implements OnInit {
   
     const breakfastData = {
       dateBreakfast: this.breakfast.dateBreakfast,
-      descricao: this.breakfast.description,
+      description: this.breakfast.description,
       employee: employees
     }
   
-    this.save(breakfastData)
+    this.breakfast.id !== 0 ? this.update() : this.save(breakfastData)
   }
   
 
@@ -159,12 +170,21 @@ export class BreakfastComponent implements OnInit {
     this.findAll()
   }
 
+  private update() {
+    this._loadingService.show()
+
+    this._BreakfastService.update(this.breakfast).subscribe({
+      next: this.handleResponseSaveOrUpdate.bind(this),
+      error: this.handleError.bind(this)
+    }).add(() => this._loadingService.hide())
+  }
+
   private save(breakfastData: any): void {
     this._loadingService.show();
     this._BreakfastService.save(breakfastData).subscribe({
       next: this.handleResponseSaveOrUpdate.bind(this),
       error: this.handleError.bind(this)
-    }).add(() => this._loadingService.hide());
+    }).add(() => this._loadingService.hide())
   }
 
   findAll() {
