@@ -17,36 +17,35 @@
 
 
                 <div class="card-body">
-
-                    <div *ngIf="isLoading; else itemTable">
+                    <div *ngIf="isLoading; else viewTable">
                         <div class="d-flex justify-content-center mt-4 mb-4">
                             <app-loading-local></app-loading-local>
                         </div>
                     </div>
-
-                    <ng-template #itemTable>
-                        <div class="d-flex align-items-center mt-4"
-                            [ngClass]="{ 'justify-content-center flex-wrap text-center ': isMobileDevice, 'justify-content-between': !isMobileDevice }">
-
+    
+                    <ng-template #viewTable>
+                        <div *ngIf="dataset.length > 0; else noData">
+                            <div class="table-responsive">
+                                <table id="dataTable" class="table table-bordered table-striped mt-4" aria-describedby="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th *ngFor="let header of headers">{{ header }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of dataset">
+                                            <td>{{ item.id }}</td>
+                                            <td>{{ item.description }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-
-                        <div class="table-responsive">
-                            <table id="dataTable" class="table table-bordered table-striped mt-4"
-                                aria-describedby="dataTable">
-                                <thead>
-                                    <tr>
-                                        <th *ngFor="let header of headers">
-                                            {{header}}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let item of dataset">
-                                        <td>{{ item.id }}</td>
-                                        <td>{{ item.description }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <ng-template #noData>
+                            <div class="d-flex justify-content-center mt-4" id="mensagemErro" style="color: red;">
+                                <p style="color: black;">Não existe dados a serem exibidos ou você ainda não fez a busca.</p>
+                            </div>
+                        </ng-template>
                     </ng-template>
                 </div>
             </div>
@@ -87,7 +86,6 @@
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

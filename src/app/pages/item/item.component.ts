@@ -20,11 +20,10 @@ export class ItemComponent implements OnInit {
   item: Item = new Item()
 
   dataset: any[] = []
-  itemList: any[] = []
 
   itemForm: FormGroup
 
-  headers: string[] = ['Id', 'Descrição']
+  headers: string[] = ['Id', 'Descrição', 'Ações']
 
   isSearch: boolean = false
   isMobileDevice: boolean = false
@@ -83,12 +82,11 @@ export class ItemComponent implements OnInit {
 
 
   findAll() {
-    this.isLoading = true;
-
+    this.isLoading = true
     this._ItemService.findAll().subscribe({
       next: this.handleResponseFindPage.bind(this),
       error: this.handleError.bind(this)
-    }).add(() => this.isLoading = false);
+    }).add(() => this.isLoading = false)
   }
 
   private handleResponseSaveOrUpdate() {
@@ -101,8 +99,8 @@ export class ItemComponent implements OnInit {
   }
 
   private handleResponseFindPage(resp: any []) {
-    this.itemList = resp
-    this.dataset = this.itemList
+    console.log('Data received: ', resp)
+    this.dataset = resp
     this.isSearch = true
   }
 

@@ -44,7 +44,10 @@
                                 <tbody>
                                     <tr *ngFor="let item of dataset">
                                         <td>{{ item.description }}</td>
-                                        <td>{{ item.date }}</td>
+                                        <td>{{ item.dateBreakfast }}</td>
+                                        <td><button type="button" class="btn btn-sm btn-primary" (click)="openModalViewBreakfast(item)">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                          </button>
                                     </tr>
                                 </tbody>
 
@@ -66,6 +69,132 @@
             <div class="modal-header">
                 <h4 class="modal-title">Cadastrar Café da manhã</h4>
                 <button type="button" class="close" aria-label="Close" (click)="closeModalNewBreakfast()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-3" [formGroup]="breakfastForm">
+
+
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="txtName">Descrição<sup class="text-danger">*</sup></label>
+                            <input type="text" id="txtName" class="form-control" formControlName="description"
+                                placeholder="Descrição">
+                            <div class="form-text text-danger" *ngIf="isTouchAndInvalid('description') || isError">
+                                <small *ngIf="breakfastForm.get('description')?.hasError('required')">Campo
+                                    Obrigatório</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label for="txtName">Data do café da manhã<sup class="text-danger">*</sup></label>
+                            <input type="date" id="txtName" class="form-control" formControlName="dateBreakfast"
+                                placeholder="Digite o seu Cpf">
+                            <div class="form-text text-danger" *ngIf="isTouchAndInvalid('dateBreakfast') || isError">
+                                <small *ngIf="breakfastForm.get('dateBreakfast')?.hasError('required')">Campo
+                                    Obrigatório</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label>Funcionário</label>
+                            <select id="employeeId" class="form-control select" style="width: 100%;"
+                                formControlName="employee">
+                                <option *ngFor="let item of employeeList" [value]="item.id">{{item.name}} - {{
+                                    item.cpf | mask: '000.000.000-00'}} </option>
+                            </select>
+                            <div class="form-text text-danger" *ngIf="isTouchAndInvalid('employee') || isError">
+                                <small *ngIf="breakfastForm.get('employee')?.hasError('required')">Campo
+                                    Obrigatório</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label>item</label>
+                            <select id="itemId" class="form-control select" style="width: 100%;"
+                                formControlName="item">
+                                <option *ngFor="let item of itemList" [value]="item.id">{{item.description}} </option>
+                            </select>
+                            <div class="form-text text-danger" *ngIf="isTouchAndInvalid('item') || isError">
+                                <small *ngIf="breakfastForm.get('item')?.hasError('required')">Campo
+                                    Obrigatório</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <label>Incluir Item</label>
+                            <button type="button" class="btn btn-sm btn-primary  form-control" (click)="itemSelected()">
+                                <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <table id="dataTable" class="table table-bordered table-striped mt-4"
+                            aria-describedby="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Cpf</th>
+                                    <th>Item</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let entry of selectedItemList">
+                                    <td>{{ entry.name}}</td>
+                                    <td>{{ entry.cpf | mask: '000.000.000-00'}}</td>
+                                    <ul>
+                                        <li *ngFor="let item of entry.items">
+                                            {{ item.description }}
+                                        </li>
+                                    </ul>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <button type="button" class="btn btn-link btn-sm"
+                                                (click)="deleteItem(entry)">
+                                                <i class="fas fa-trash-alt text-danger"></i>
+                                            </button>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>                
+                    </form>
+            </div>
+            <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="modal-footer">
+                    <div class="form-group d-flex align-items-end">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto" (click)="prepareSave()">
+                            <i class="fas fa-save icoRight "></i>
+                            Salvar
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade custom-modal" id="viewBreakfastModal" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Café da manhã</h4>
+                <button type="button" class="close" aria-label="Close" (click)="closeModalViewBreakfast()">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
